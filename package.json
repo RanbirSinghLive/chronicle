@@ -1,0 +1,30 @@
+{
+  "name": "obsidian-chronicle",
+  "version": "0.1.0",
+  "description": "Story bible and continuity assistant for longform fiction writers",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+  },
+  "keywords": [
+    "obsidian",
+    "fiction",
+    "writing",
+    "story-bible"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "obsidian": "latest"
+  },
+  "devDependencies": {
+    "@codemirror/state": "^6.5.4",
+    "@codemirror/view": "^6.39.15",
+    "@types/node": "^22.0.0",
+    "builtin-modules": "3.3.0",
+    "esbuild": "0.25.5",
+    "tslib": "2.4.0",
+    "typescript": "^5.8.3"
+  }
+}

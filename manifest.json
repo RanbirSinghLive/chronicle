@@ -1,0 +1,10 @@
+{
+  "id": "chronicle",
+  "name": "Chronicle",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "A story bible and continuity assistant for longform fiction writers. Tracks characters, locations, and objects across your manuscript.",
+  "author": "Ranbir",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}

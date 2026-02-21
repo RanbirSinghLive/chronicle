@@ -1,0 +1,374 @@
+/* Chronicle Plugin Styles */
+
+/* Settings panel section headings */
+.chronicle-settings-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-normal);
+  margin-top: 1.5rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding-bottom: 0.25rem;
+}
+
+/* Entity type badges in modals and views */
+.chronicle-type-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.chronicle-type-badge--character {
+  background-color: var(--color-blue);
+  color: var(--text-on-accent);
+}
+
+.chronicle-type-badge--location {
+  background-color: var(--color-green);
+  color: var(--text-on-accent);
+}
+
+.chronicle-type-badge--object {
+  background-color: var(--color-yellow);
+  color: var(--text-on-accent);
+}
+
+.chronicle-type-badge--faction {
+  background-color: var(--color-purple);
+  color: var(--text-on-accent);
+}
+
+/* Status/help text in modals */
+.chronicle-modal-status {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+/* Entity suggest modal: second line (type + aliases) */
+.chronicle-suggest-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ── Presence Matrix ─────────────────────────────────────────────────────── */
+
+.chronicle-matrix-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: 0.75rem;
+  box-sizing: border-box;
+}
+
+.chronicle-matrix-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+}
+
+.chronicle-matrix-toolbar button {
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.chronicle-matrix-toolbar button:hover {
+  background: var(--background-modifier-hover);
+}
+
+.chronicle-matrix-gap-btn-active {
+  background: var(--color-orange) !important;
+  color: var(--text-on-accent) !important;
+  border-color: transparent !important;
+}
+
+.chronicle-matrix-status {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+.chronicle-matrix-scroll {
+  overflow: auto;
+  flex: 1;
+}
+
+.chronicle-matrix-table {
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  width: max-content;
+}
+
+/* Column header row */
+.chronicle-matrix-table thead th {
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  padding: 4px 8px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.chronicle-matrix-th-scene {
+  position: sticky !important;
+  left: 0;
+  z-index: 3 !important;
+  text-align: left;
+}
+
+/* Scene label cells */
+.chronicle-matrix-td-scene {
+  position: sticky;
+  left: 0;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  padding: 3px 8px;
+  z-index: 1;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Presence cells */
+.chronicle-matrix-cell {
+  border: 1px solid var(--background-modifier-border);
+  padding: 3px 6px;
+  text-align: center;
+  min-width: 2rem;
+  cursor: default;
+  font-family: var(--font-monospace);
+}
+
+.chronicle-matrix-cell-active    { color: var(--text-normal);  font-weight: 600; }
+.chronicle-matrix-cell-mentioned { color: var(--text-muted); }
+.chronicle-matrix-cell-pov       { color: var(--color-accent); font-weight: 700; }
+.chronicle-matrix-cell-absent    { color: var(--text-faint); }
+
+/* Gap highlight */
+.chronicle-matrix-gap {
+  background: rgba(var(--color-red-rgb, 255, 80, 80), 0.12) !important;
+}
+
+/* Clickable buttons inside cells */
+.chronicle-matrix-header-btn,
+.chronicle-matrix-scene-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: var(--text-accent);
+  font-size: inherit;
+  font-weight: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.chronicle-matrix-header-btn:hover,
+.chronicle-matrix-scene-btn:hover {
+  color: var(--text-accent-hover);
+}
+
+/* ── Timeline Sidebar ────────────────────────────────────────────────────── */
+
+.chronicle-timeline-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: 0.75rem;
+  box-sizing: border-box;
+}
+
+.chronicle-timeline-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.chronicle-timeline-toolbar button {
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.chronicle-timeline-toolbar button:hover {
+  background: var(--background-modifier-hover);
+}
+
+.chronicle-timeline-mode-active {
+  background: var(--color-accent) !important;
+  color: var(--text-on-accent) !important;
+  border-color: transparent !important;
+}
+
+.chronicle-timeline-status {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+.chronicle-timeline-scroll {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Vertical connecting line */
+.chronicle-timeline-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.chronicle-timeline-list::before {
+  content: "";
+  position: absolute;
+  left: 0.45rem;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  width: 2px;
+  background: var(--background-modifier-border);
+}
+
+.chronicle-timeline-item {
+  padding: 0.35rem 0.4rem 0.35rem 1.5rem;
+  position: relative;
+  margin-bottom: 0.1rem;
+}
+
+/* Node dot */
+.chronicle-timeline-item::before {
+  content: "◉";
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  font-size: 0.65rem;
+  color: var(--color-accent);
+  width: 1rem;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.chronicle-timeline-item-unresolved::before {
+  content: "◌";
+  color: var(--text-faint);
+}
+
+.chronicle-timeline-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.chronicle-timeline-scene-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: var(--text-accent);
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.chronicle-timeline-scene-btn:hover {
+  color: var(--text-accent-hover);
+}
+
+.chronicle-timeline-anchor-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--color-accent);
+  color: var(--text-on-accent);
+}
+
+.chronicle-timeline-markers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.25rem;
+}
+
+.chronicle-timeline-marker {
+  font-size: 0.71rem;
+  color: var(--text-muted);
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  cursor: default;
+  border-left-width: 2px;
+}
+
+.chronicle-timeline-marker-relative_forward { border-left-color: var(--color-green); }
+.chronicle-timeline-marker-relative_backward { border-left-color: var(--color-orange); }
+.chronicle-timeline-marker-same_day { border-left-color: var(--color-blue); }
+.chronicle-timeline-marker-absolute { border-left-color: var(--color-purple); }
+
+.chronicle-timeline-marker-more {
+  font-size: 0.71rem;
+  color: var(--text-faint);
+  padding: 1px 4px;
+  align-self: center;
+}
+
+.chronicle-timeline-unresolved-heading {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 1rem 0 0.4rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--background-modifier-border);
+}
+
+.chronicle-timeline-unresolved .chronicle-timeline-item {
+  opacity: 0.75;
+}
+
+.chronicle-timeline-set-anchor-hint {
+  display: inline-block;
+  font-size: 0.73rem;
+  margin-top: 0.25rem;
+  color: var(--text-muted);
+  background: none;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 3px;
+  padding: 1px 7px;
+  cursor: pointer;
+}
+
+.chronicle-timeline-set-anchor-hint:hover {
+  color: var(--text-normal);
+  border-color: var(--text-muted);
+  background: var(--background-modifier-hover);
+}
