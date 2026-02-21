@@ -206,6 +206,7 @@ export class RegistryManager {
 
       if (typeof obj.sceneFolder === "string") entry.sceneFolder = obj.sceneFolder;
       if (typeof obj.excluded === "boolean") entry.excluded = obj.excluded;
+      if (typeof obj.llmOptIn === "boolean") entry.llmOptIn = obj.llmOptIn;
 
       return entry;
     } catch {
@@ -237,6 +238,9 @@ export class RegistryManager {
 
     if (entry.sceneFolder) lines.push(`  sceneFolder: "${entry.sceneFolder}"`);
     if (entry.excluded) lines.push(`  excluded: true`);
+    if (typeof entry.llmOptIn === "boolean") {
+      lines.push(`  llmOptIn: ${entry.llmOptIn}`);
+    }
 
     return lines.join("\n");
   }

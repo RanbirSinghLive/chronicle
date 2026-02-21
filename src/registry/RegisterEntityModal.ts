@@ -4,10 +4,12 @@ import type { RegistryManager } from "./RegistryManager";
 
 export class RegisterEntityModal extends Modal {
   private registry: RegistryManager;
+  private llmEnabled: boolean;
 
-  constructor(app: App, registry: RegistryManager) {
+  constructor(app: App, registry: RegistryManager, llmEnabled = false) {
     super(app);
     this.registry = registry;
+    this.llmEnabled = llmEnabled;
   }
 
   onOpen(): void {
@@ -18,6 +20,7 @@ export class RegisterEntityModal extends Modal {
     let nameValue = "";
     let aliasesValue = "";
     let typeValue: EntityType = "character";
+    let llmOptIn: boolean | undefined = undefined; // undefined = follow global setting
 
     new Setting(contentEl)
       .setName("Name")
@@ -28,7 +31,6 @@ export class RegisterEntityModal extends Modal {
           .onChange((val) => {
             nameValue = val.trim();
           });
-        // Focus the name field when the modal opens
         setTimeout(() => text.inputEl.focus(), 50);
       });
 
@@ -57,6 +59,27 @@ export class RegisterEntityModal extends Modal {
         })
     );
 
+    // Only show the LLM opt-in toggle when Tier 2 is globally enabled
+    if (this.llmEnabled) {
+      new Setting(contentEl)
+        .setName("LLM extraction (Tier 2)")
+        .setDesc(
+          "Include this entity in Tier 2 LLM extraction runs. Leave on to follow the global setting."
+        )
+        .addDropdown((drop) =>
+          drop
+            .addOptions({
+              default: "Follow global setting",
+              yes: "Always include",
+              no: "Exclude from LLM",
+            })
+            .setValue("default")
+            .onChange((val) => {
+              llmOptIn = val === "default" ? undefined : val === "yes";
+            })
+        );
+    }
+
     const statusEl = contentEl.createEl("p", { cls: "chronicle-modal-status" });
 
     new Setting(contentEl).addButton((btn) =>
@@ -74,8 +97,11 @@ export class RegisterEntityModal extends Modal {
             .map((s) => s.trim())
             .filter(Boolean);
 
+          const entry = { name: nameValue, aliases, type: typeValue } as Parameters<typeof this.registry.addEntry>[0];
+          if (typeof llmOptIn === "boolean") entry.llmOptIn = llmOptIn;
+
           try {
-            await this.registry.addEntry({ name: nameValue, aliases, type: typeValue });
+            await this.registry.addEntry(entry);
             new Notice(`Chronicle: "${nameValue}" registered as ${typeValue}.`);
             this.close();
           } catch (err) {

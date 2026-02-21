@@ -136,8 +136,9 @@ export class ChronicleSettingTab extends PluginSettingTab {
     const llmSection = containerEl.createDiv();
     llmSection.style.display = this.plugin.settings.llmEnabled ? "" : "none";
 
-    // Ollama endpoint container — shown only when provider is "ollama"
+    // Ollama-specific settings — shown only when provider is "ollama"
     let ollamaSettingEl: HTMLElement | null = null;
+    let ollamaModelSettingEl: HTMLElement | null = null;
 
     new Setting(containerEl)
       .setName("Enable LLM extraction")
@@ -167,9 +168,9 @@ export class ChronicleSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.llmProvider)
           .onChange(async (value) => {
             this.plugin.settings.llmProvider = value as "anthropic" | "openai" | "ollama";
-            if (ollamaSettingEl) {
-              ollamaSettingEl.style.display = value === "ollama" ? "" : "none";
-            }
+            const showOllama = value === "ollama" ? "" : "none";
+            if (ollamaSettingEl) ollamaSettingEl.style.display = showOllama;
+            if (ollamaModelSettingEl) ollamaModelSettingEl.style.display = showOllama;
             await this.plugin.saveSettings();
           })
       );
@@ -204,9 +205,24 @@ export class ChronicleSettingTab extends PluginSettingTab {
           })
       );
 
+    const ollamaModelSetting = new Setting(llmSection)
+      .setName("Ollama model")
+      .setDesc("Name of the Ollama model to use (e.g. llama3.2, mistral, phi3).")
+      .addText((text) =>
+        text
+          .setPlaceholder("llama3.2")
+          .setValue(this.plugin.settings.ollamaModel)
+          .onChange(async (value) => {
+            this.plugin.settings.ollamaModel = value.trim() || "llama3.2";
+            await this.plugin.saveSettings();
+          })
+      );
+
     ollamaSettingEl = ollamaSetting.settingEl;
-    ollamaSettingEl.style.display =
-      this.plugin.settings.llmProvider === "ollama" ? "" : "none";
+    ollamaModelSettingEl = ollamaModelSetting.settingEl;
+    const isOllama = this.plugin.settings.llmProvider === "ollama";
+    ollamaSettingEl.style.display = isOllama ? "" : "none";
+    ollamaModelSettingEl.style.display = isOllama ? "" : "none";
 
     // ── Section 4: Integration ───────────────────────────────────────────────
 

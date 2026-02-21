@@ -25,6 +25,14 @@ import {
   patternVerbAttr,
   resolveNoun,
 } from "./patterns";
+import { LlmClient } from "./LlmClient";
+
+/** Attribute categories owned by Tier 1 — Tier 2 will not overwrite these. */
+const TIER1_ATTRS = new Set([
+  ...Object.keys(ATTRIBUTE_NOUN_DICT),
+  "complexion",
+  "location",
+]);
 
 interface Paragraph {
   text: string;
@@ -37,6 +45,7 @@ export class ExtractionEngine {
   private registry: RegistryManager;
   private bible: BibleManager;
   private conflictManager: ConflictManager;
+  private llmClient: LlmClient;
 
   constructor(
     app: App,
@@ -50,6 +59,7 @@ export class ExtractionEngine {
     this.registry = registry;
     this.bible = bible;
     this.conflictManager = conflictManager;
+    this.llmClient = new LlmClient(settings);
   }
 
   // ── Public API ──────────────────────────────────────────────────────────────
@@ -67,7 +77,9 @@ export class ExtractionEngine {
       this.registry.loadEntries(),
     ]);
 
-    const factMap = this.extractFromContent(content, file.path, entries);
+    let factMap = this.extractFromContent(content, file.path, entries);
+    factMap = await this.runTier2(factMap, content, file.path, entries);
+
     const entityResults = await this.applyFactMap(factMap, entries, file.path, null);
 
     const allConflicts: ConflictRecord[] = entityResults.flatMap((r) => r.conflicts);
@@ -101,7 +113,8 @@ export class ExtractionEngine {
 
     for (const file of allFiles) {
       const content = await this.app.vault.read(file);
-      const factMap = this.extractFromContent(content, file.path, entries);
+      let factMap = this.extractFromContent(content, file.path, entries);
+      factMap = await this.runTier2(factMap, content, file.path, entries);
 
       for (const [entityName, facts] of factMap) {
         if (!globalAttrs.has(entityName)) {
@@ -482,6 +495,78 @@ export class ExtractionEngine {
     const textBefore = windowText.slice(0, matchIndex);
     const newlinesBefore = (textBefore.match(/\n/g) ?? []).length;
     return windowStartLine + newlinesBefore;
+  }
+
+  // ── Private: Tier 2 LLM integration ─────────────────────────────────────────
+
+  /**
+   * If LLM extraction is enabled, call the LLM for entities that opt in,
+   * then merge Tier 2 facts into the existing Tier 1 fact map.
+   * Never overwrites Tier 1 facts for attributes Tier 1 already covers.
+   */
+  private async runTier2(
+    tier1Map: Map<string, ExtractedFact[]>,
+    content: string,
+    filePath: string,
+    entries: RegistryEntry[]
+  ): Promise<Map<string, ExtractedFact[]>> {
+    if (!this.settings.llmEnabled) return tier1Map;
+
+    // Only characters that have not explicitly opted out
+    const llmEntities = entries.filter(
+      (e) => e.type === "character" && !e.excluded && e.llmOptIn !== false
+    );
+    if (llmEntities.length === 0) return tier1Map;
+
+    try {
+      const body = stripFrontmatter(content);
+      const tier2 = await this.llmClient.extract(body, llmEntities);
+      return this.mergeTier2(tier1Map, tier2, filePath);
+    } catch (err) {
+      console.error("Chronicle: Tier 2 LLM extraction failed", err);
+      return tier1Map;
+    }
+  }
+
+  /**
+   * Merge Tier 2 facts into the Tier 1 fact map.
+   * Tier 1 wins for its own attribute categories (TIER1_ATTRS).
+   * New attributes from Tier 2 are appended as ExtractedFact with extractedBy: "tier2".
+   */
+  private mergeTier2(
+    tier1Map: Map<string, ExtractedFact[]>,
+    tier2: Record<string, Record<string, { value: string; quote: string }>>,
+    filePath: string
+  ): Map<string, ExtractedFact[]> {
+    const now = new Date().toISOString();
+
+    for (const [entityName, attrs] of Object.entries(tier2)) {
+      if (!tier1Map.has(entityName)) {
+        tier1Map.set(entityName, []);
+      }
+      const existing = tier1Map.get(entityName)!;
+      const existingAttrs = new Set(existing.map((f) => f.attribute));
+
+      for (const [attr, { value, quote }] of Object.entries(attrs)) {
+        // Skip if Tier 1 already found something for this attribute category
+        if (TIER1_ATTRS.has(attr) && existingAttrs.has(attr)) continue;
+        // Skip if already present (even from a prior Tier 2 run)
+        if (existingAttrs.has(attr)) continue;
+
+        existingAttrs.add(attr);
+        existing.push({
+          attribute: attr,
+          value: value.trim(),
+          sourceScene: filePath,
+          sourceLine: 0,  // LLM extraction doesn't resolve line numbers
+          sourceQuote: quote.trim().split(/\s+/).slice(0, 30).join(" "),
+          extractedBy: "tier2",
+          extractedAt: now,
+        });
+      }
+    }
+
+    return tier1Map;
   }
 
   // ── Private: fact application ───────────────────────────────────────────────

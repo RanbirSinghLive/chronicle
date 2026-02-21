@@ -115,7 +115,7 @@ export default class ChroniclePlugin extends Plugin {
       id: "register-entity",
       name: "Register new entity",
       callback: () => {
-        new RegisterEntityModal(this.app, this.registry).open();
+        new RegisterEntityModal(this.app, this.registry, this.settings.llmEnabled).open();
       },
     });
 

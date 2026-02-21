@@ -8,6 +8,7 @@ export interface RegistryEntry {
   type: EntityType;
   sceneFolder?: string;  // restrict extraction to a specific folder
   excluded?: boolean;    // exclude from extraction entirely
+  llmOptIn?: boolean;    // opt in/out of Tier 2 LLM extraction; undefined = follow global setting
 }
 
 // ─── Fact and Conflict Types ──────────────────────────────────────────────────
@@ -74,6 +75,7 @@ export interface ChronicleSettings {
   llmProvider: LlmProvider;
   llmApiKey: string;
   ollamaEndpoint: string;
+  ollamaModel: string;           // model name for Ollama (e.g. "llama3.2")
   compileIntegration: boolean;
   conflictGutter: boolean;
   hardConflictColour: string;
@@ -91,6 +93,7 @@ export const DEFAULT_SETTINGS: ChronicleSettings = {
   llmProvider: "anthropic",
   llmApiKey: "",
   ollamaEndpoint: "http://localhost:11434",
+  ollamaModel: "llama3.2",
   compileIntegration: true,
   conflictGutter: true,
   hardConflictColour: "red",
