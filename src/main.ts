@@ -18,6 +18,7 @@ import { PresenceMatrixView, MATRIX_VIEW_TYPE } from "./matrix/PresenceMatrixVie
 import { TimelineAnalyzer } from "./timeline/TimelineAnalyzer";
 import { TimelineView, TIMELINE_VIEW_TYPE } from "./timeline/TimelineView";
 import { SetAnchorModal } from "./timeline/SetAnchorModal";
+import { AutoSetupModal } from "./autosetup/AutoSetupModal";
 
 export default class ChroniclePlugin extends Plugin {
   settings: ChronicleSettings;
@@ -240,6 +241,24 @@ export default class ChroniclePlugin extends Plugin {
           return;
         }
         new SetAnchorModal(this.app, view.file).open();
+      },
+    });
+
+    this.addCommand({
+      id: "auto-setup-from-draft",
+      name: "Auto-setup from draft",
+      callback: () => {
+        if (!this.settings.llmEnabled) {
+          new Notice("Chronicle: Enable LLM extraction in settings to use Auto-setup.");
+          return;
+        }
+        new AutoSetupModal(
+          this.app,
+          this.settings,
+          this.registry,
+          this.bible,
+          this.extraction
+        ).open();
       },
     });
 

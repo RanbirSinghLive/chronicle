@@ -39,3 +39,46 @@ export function stripFrontmatter(content: string): string {
   // Skip past the closing ---\n
   return content.slice(secondDelimiter + 4);
 }
+
+/**
+ * Set `key: value` in the YAML frontmatter of a markdown string.
+ * Creates a frontmatter block if none exists.
+ */
+export function setFrontmatterKey(
+  content: string,
+  key: string,
+  value: number
+): string {
+  if (content.startsWith("---")) {
+    const endIdx = content.indexOf("\n---", 3);
+    if (endIdx !== -1) {
+      const fmBody = content.slice(4, endIdx);
+      const rest = content.slice(endIdx); // starts with \n---
+
+      const keyRegex = new RegExp(`^${key}:.*$`, "m");
+      if (keyRegex.test(fmBody)) {
+        return "---\n" + fmBody.replace(keyRegex, `${key}: ${value}`) + rest;
+      }
+      const sep = fmBody.trim() ? "\n" : "";
+      return "---\n" + fmBody + sep + `${key}: ${value}` + rest;
+    }
+  }
+  return `---\n${key}: ${value}\n---\n\n` + content;
+}
+
+/** Remove `key` line(s) from the YAML frontmatter of a markdown string. */
+export function removeFrontmatterKey(content: string, key: string): string {
+  if (!content.startsWith("---")) return content;
+  const endIdx = content.indexOf("\n---", 3);
+  if (endIdx === -1) return content;
+
+  const fmBody = content.slice(4, endIdx);
+  const rest = content.slice(endIdx);
+
+  const cleaned = fmBody
+    .split("\n")
+    .filter((line) => !line.match(new RegExp(`^${key}:`)))
+    .join("\n");
+
+  return "---\n" + cleaned + rest;
+}

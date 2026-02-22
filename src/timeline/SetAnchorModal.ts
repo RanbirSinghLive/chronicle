@@ -1,4 +1,5 @@
 import { App, Modal, Notice, Setting, TFile } from "obsidian";
+import { setFrontmatterKey, removeFrontmatterKey } from "../utils/vault";
 
 /**
  * Modal for setting or clearing a story-time anchor on a scene file.
@@ -91,7 +92,7 @@ export class SetAnchorModal extends Modal {
     const content = await this.app.vault.read(this.file);
     await this.app.vault.modify(
       this.file,
-      this.setFrontmatterKey(content, "chronicle-anchor", position)
+      setFrontmatterKey(content, "chronicle-anchor", position)
     );
   }
 
@@ -99,54 +100,7 @@ export class SetAnchorModal extends Modal {
     const content = await this.app.vault.read(this.file);
     await this.app.vault.modify(
       this.file,
-      this.removeFrontmatterKey(content, "chronicle-anchor")
+      removeFrontmatterKey(content, "chronicle-anchor")
     );
-  }
-
-  /**
-   * Set `key: value` in the YAML frontmatter.
-   * Creates a frontmatter block if none exists.
-   */
-  private setFrontmatterKey(
-    content: string,
-    key: string,
-    value: number
-  ): string {
-    if (content.startsWith("---")) {
-      const endIdx = content.indexOf("\n---", 3);
-      if (endIdx !== -1) {
-        // fmBody = text between opening and closing ---
-        const fmBody = content.slice(4, endIdx);
-        const rest = content.slice(endIdx); // starts with \n---
-
-        const keyRegex = new RegExp(`^${key}:.*$`, "m");
-        if (keyRegex.test(fmBody)) {
-          return "---\n" + fmBody.replace(keyRegex, `${key}: ${value}`) + rest;
-        }
-        // Append key before closing ---
-        const sep = fmBody.trim() ? "\n" : "";
-        return "---\n" + fmBody + sep + `${key}: ${value}` + rest;
-      }
-    }
-    // No valid frontmatter — prepend one
-    return `---\n${key}: ${value}\n---\n\n` + content;
-  }
-
-  /** Remove `key` line(s) from the YAML frontmatter. */
-  private removeFrontmatterKey(content: string, key: string): string {
-    if (!content.startsWith("---")) return content;
-    const endIdx = content.indexOf("\n---", 3);
-    if (endIdx === -1) return content;
-
-    const fmBody = content.slice(4, endIdx);
-    const rest = content.slice(endIdx);
-
-    // Remove the key line (may or may not have a leading newline)
-    const cleaned = fmBody
-      .split("\n")
-      .filter((line) => !line.match(new RegExp(`^${key}:`)))
-      .join("\n");
-
-    return "---\n" + cleaned + rest;
   }
 }

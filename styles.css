@@ -372,3 +372,90 @@
   border-color: var(--text-muted);
   background: var(--background-modifier-hover);
 }
+
+/* ── Auto-Setup Modal ────────────────────────────────────────────────────── */
+
+.chronicle-modal-desc {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin-bottom: 0.75rem;
+}
+
+.chronicle-autosetup-option-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.chronicle-autosetup-btn-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.chronicle-autosetup-progress {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.chronicle-autosetup-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.chronicle-autosetup-table th {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.chronicle-autosetup-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--background-modifier-border-hover);
+  vertical-align: top;
+}
+
+.chronicle-autosetup-name-input,
+.chronicle-autosetup-alias-input {
+  width: 100%;
+  font-size: 0.85rem;
+  background: var(--background-modifier-form-field);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 3px;
+  padding: 2px 5px;
+  color: var(--text-normal);
+}
+
+.chronicle-autosetup-reason {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  max-width: 200px;
+}
+
+.chronicle-confidence-high { color: var(--color-green); font-weight: 600; }
+.chronicle-confidence-medium { color: var(--color-yellow); }
+.chronicle-confidence-low { color: var(--text-faint); }
+
+.chronicle-autosetup-status-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--background-modifier-border-hover);
+}
+
+.chronicle-autosetup-status-pending { color: var(--text-muted); font-style: italic; }
+.chronicle-autosetup-status-done { color: var(--color-green); }
+.chronicle-autosetup-status-error { color: var(--color-red); }
+
+.chronicle-autosetup-warning {
+  color: var(--color-orange);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
